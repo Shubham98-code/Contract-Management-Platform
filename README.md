@@ -1,4 +1,4 @@
-# Client Contract Management System
+# Contract Management System
 
 [![Status](https://img.shields.io/badge/Status-Active-success)]()
 [![Stack](https://img.shields.io/badge/Stack-Vanilla_JS_|_HTML5_|_Tailwind-blue)]()
