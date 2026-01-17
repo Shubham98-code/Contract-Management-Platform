@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Contract</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-50 font-sans text-slate-800">
+    
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <a href="index.html" class="inline-flex items-center text-slate-500 hover:text-green-600 mb-6 transition-colors group">
+            <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Back to Dashboard
+        </a>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border-t-4 border-green-500">
+                    <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50">
+                        <h1 class="text-2xl font-bold text-slate-800">Edit Contract Data</h1>
+                        <p class="text-slate-500 text-sm mt-1" id="contract-name">Loading...</p>
+                    </div>
+
+                    <div class="p-8">
+                        <form id="update-form" class="space-y-6" onsubmit="event.preventDefault(); saveChanges();">
+                            <div id="fields-container" class="space-y-6">
+                                </div>
+
+                            <div class="pt-6 border-t border-slate-100 mt-6">
+                                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-lg font-bold shadow-lg transition-all flex justify-center items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                                    Save Field Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl shadow-md border border-slate-100 p-6 sticky top-8">
+                    <h3 class="font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100 flex justify-between items-center">
+                        Contract Lifecycle
+                        <span id="status-badge-small" class="text-xs px-2 py-1 rounded bg-slate-100 text-slate-600">...</span>
+                    </h3>
+                    
+                    <div id="lifecycle-list" class="space-y-2 relative"></div>
+
+                    <div class="mt-8 pt-4 border-t border-slate-100">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Danger Zone</p>
+                        <div class="space-y-3">
+                             <button id="revoke-btn" onclick="changeStatus('Revoked')" class="w-full text-orange-600 bg-orange-50 border border-orange-200 hover:bg-orange-100 font-bold text-sm py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                Revoke Contract
+                            </button>
+                            <button onclick="deleteContract()" class="w-full text-red-600 bg-white border border-red-200 hover:bg-red-50 font-bold text-sm py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                Delete Contract
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        const contracts = DB.get("contracts");
+        const contract = contracts.find(c => c.id == id);
+
+        if (!contract) {
+            alert("Contract not found!");
+            window.location.href = "index.html";
+        }
+
+        // Render Header & Fields
+        document.getElementById('contract-name').innerText = (contract.clientName || 'Contract #' + contract.id) + " - " + contract.blueprintName;
+        document.getElementById('status-badge-small').innerText = contract.status;
+
+        const container = document.getElementById('fields-container');
+        const isLocked = contract.status === 'Locked' || contract.status === 'Revoked';
+
+        container.innerHTML = contract.fields.map((f, idx) => {
+            // Check if this is a signature field
+            if (f.type === 'signature') {
+                const hasValue = f.value && f.value.length > 0;
+                return `
+                <div class="p-4 border border-slate-200 rounded-lg bg-slate-50">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">${f.label} (Upload Image)</label>
+                    
+                    <div class="mb-3 ${hasValue ? '' : 'hidden'}" id="preview-container-${idx}">
+                        <img id="preview-${idx}" src="${f.value}" class="h-20 border border-slate-300 rounded bg-white p-1">
+                    </div>
+
+                    <input type="file" accept="image/*" 
+                        onchange="handleFileUpload(this, ${idx})"
+                        ${isLocked ? 'disabled' : ''}
+                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all">
+                    
+                    <input type="hidden" id="field-${idx}" value="${f.value || ''}">
+                </div>`;
+            } else {
+                // Standard Text/Date Input
+                return `
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">${f.label}</label>
+                    <input type="${f.type}" id="field-${idx}" value="${f.value || ''}" 
+                        ${isLocked ? 'disabled' : ''}
+                        class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none disabled:bg-slate-100 disabled:text-slate-500">
+                </div>`;
+            }
+        }).join("");
+
+        if(isLocked) document.querySelector('button[type="submit"]').style.display = 'none';
+
+        renderLifecycleList();
+
+        // --- NEW: Handle File Upload ---
+        function handleFileUpload(input, idx) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // 1. Update Hidden Input with Base64 String
+                    document.getElementById(`field-${idx}`).value = e.target.result;
+                    
+                    // 2. Update Preview
+                    const preview = document.getElementById(`preview-${idx}`);
+                    const container = document.getElementById(`preview-container-${idx}`);
+                    preview.src = e.target.result;
+                    container.classList.remove('hidden');
+                };
+
+                // Read file as Data URL (Base64)
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Render Status List (Same as before)
+        function renderLifecycleList() {
+            const listContainer = document.getElementById('lifecycle-list');
+            const steps = [
+                { status: 'Created', label: 'Draft Created', icon: '📝' },
+                { status: 'Approved', label: 'Approve Contract', icon: '✅' },
+                { status: 'Sent', label: 'Send to Client', icon: '📨' },
+                { status: 'Signed', label: 'Mark as Signed', icon: '✍️' },
+                { status: 'Locked', label: 'Lock Contract', icon: '🔒' }
+            ];
+
+            if(contract.status === 'Revoked') {
+                listContainer.innerHTML = `<div class="p-3 rounded-lg bg-orange-50 border border-orange-200 text-orange-800 font-bold flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-orange-200 flex items-center justify-center text-xs">🚫</span>Contract Revoked</div>`;
+                document.getElementById('revoke-btn').style.display = 'none';
+                return;
+            }
+
+            let currentIndex = steps.findIndex(s => s.status === contract.status);
+
+            listContainer.innerHTML = steps.map((step, index) => {
+                let stateClass = "";
+                let iconDisplay = "";
+                let clickAction = "";
+
+                if (index <= currentIndex) {
+                    stateClass = "bg-white border-slate-200 text-slate-400";
+                    iconDisplay = `<div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center border border-green-200">✓</div>`;
+                    if(index === currentIndex && contract.status === 'Locked') {
+                        iconDisplay = `<div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center">🔒</div>`;
+                        stateClass = "bg-slate-50 border-slate-200 text-slate-800 font-bold";
+                    }
+                } else if (index === currentIndex + 1) {
+                    stateClass = "bg-blue-50 border-blue-500 shadow-md transform scale-[1.02] cursor-pointer hover:bg-blue-100 transition-all";
+                    iconDisplay = `<div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg animate-pulse">${step.icon}</div>`;
+                    clickAction = `onclick="changeStatus('${step.status}')"`;
+                } else {
+                    stateClass = "bg-slate-50 border-slate-100 text-slate-300 opacity-60 pointer-events-none";
+                    iconDisplay = `<div class="w-8 h-8 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center font-bold text-xs">${index + 1}</div>`;
+                }
+
+                return `<div ${clickAction} class="relative z-10 p-3 rounded-xl border ${stateClass} flex items-center gap-4 select-none">${iconDisplay}<div class="flex-1"><p class="font-semibold text-sm">${step.label}</p>${index === currentIndex + 1 ? '<p class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">Click to Proceed</p>' : ''}</div></div>`;
+            }).join("");
+        }
+
+        // Save Function (works for both text and hidden file inputs)
+        function saveChanges() {
+            const inputs = document.querySelectorAll('input[id^="field-"]');
+            inputs.forEach((input, idx) => contract.fields[idx].value = input.value);
+            saveToDB();
+            
+            const btn = document.querySelector('button[type="submit"]');
+            const original = btn.innerHTML;
+            btn.innerHTML = "✓ Saved!";
+            btn.classList.add("bg-green-600", "text-white");
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.classList.remove("bg-green-600");
+                btn.classList.add("bg-slate-900");
+            }, 1500);
+        }
+
+        function changeStatus(newStatus) {
+            const inputs = document.querySelectorAll('input[id^="field-"]');
+            inputs.forEach((input, idx) => contract.fields[idx].value = input.value);
+            contract.status = newStatus;
+            saveToDB();
+            window.location.reload();
+        }
+
+        function deleteContract() {
+            if(confirm("Are you sure you want to PERMANENTLY delete this contract?")) {
+                let allContracts = DB.get("contracts");
+                allContracts = allContracts.filter(c => c.id != id);
+                DB.set("contracts", allContracts);
+                window.location.href = "index.html";
+            }
+        }
+
+        function saveToDB() {
+            const allContracts = DB.get("contracts");
+            const dbIndex = allContracts.findIndex(c => c.id == id);
+            if(dbIndex !== -1) {
+                allContracts[dbIndex] = contract;
+                DB.set("contracts", allContracts);
+            }
+        }
+    </script>
+</body>
+</html>

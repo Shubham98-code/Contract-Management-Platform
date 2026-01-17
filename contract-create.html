@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create New Contract</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Animated Background (Green Tint for Contract Flow) */
+        .bg-animated {
+            background: linear-gradient(-45deg, #f8fafc, #f0fdf4, #e0f2fe, #f1f5f9);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Slide In Animation for cards */
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Custom Radio Styling */
+        input[type="radio"]:checked + div {
+            border-color: #10b981; /* Emerald 500 */
+            background-color: #ecfdf5; /* Emerald 50 */
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.1), 0 4px 6px -2px rgba(16, 185, 129, 0.05);
+            transform: scale(1.01);
+        }
+        input[type="radio"]:checked + div .check-circle {
+            background-color: #10b981;
+            border-color: #10b981;
+            transform: scale(1.1);
+        }
+        input[type="radio"]:checked + div .icon-box {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+    </style>
+</head>
+<body class="bg-animated min-h-screen text-slate-800 selection:bg-emerald-200 selection:text-emerald-900">
+    
+    <div class="max-w-4xl mx-auto px-4 py-10">
+        
+        <a href="index.html" class="inline-flex items-center text-slate-500 hover:text-emerald-600 mb-8 transition-all duration-300 group font-medium">
+            <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-3 group-hover:scale-110 group-hover:shadow-md transition-all">
+                <svg class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </div>
+            Back to Dashboard
+        </a>
+
+        <div class="grid grid-cols-1 lg:grid-cols-1 gap-8 animate-fade-in">
+            
+            <div class="space-y-2 mb-2">
+                <h1 class="text-5xl font-extrabold tracking-tight">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-600 drop-shadow-sm">
+                        Create New Contract
+                    </span>
+                </h1>
+                <p class="text-slate-500 text-lg">Start a new agreement from a blueprint.</p>
+            </div>
+
+            <div class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-slate-200/50 border border-white/50 p-8 lg:p-10 transition-all">
+                
+                <div class="space-y-10">
+                    
+                    <div class="group">
+                        <label class="block text-sm font-bold text-slate-700 mb-2 ml-1 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs">1</span>
+                            Contract Name <span class="text-emerald-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="contractName" placeholder="e.g., John Doe - Employment Agreement" 
+                                class="w-full pl-5 pr-4 py-4 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all duration-300 outline-none font-medium text-lg placeholder:text-slate-400">
+                            <div class="absolute right-4 top-4 text-slate-400 pointer-events-none">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-4 ml-1 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs">2</span>
+                            Select Blueprint <span class="text-emerald-500">*</span>
+                        </label>
+                        
+                        <div id="blueprint-list" class="grid grid-cols-1 gap-4">
+                            </div>
+                    </div>
+
+                    <div class="pt-8 flex flex-col sm:flex-row gap-4 border-t border-slate-100 mt-4">
+                        <button onclick="handleCreate()" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white py-4 rounded-xl font-bold shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-emerald-500/50 active:scale-[0.98] flex items-center justify-center gap-2 text-lg">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></path></svg>
+                            Create Contract
+                        </button>
+                        <a href="index.html" class="px-8 py-4 rounded-xl border-2 border-slate-100 font-bold text-slate-500 hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-all duration-300 flex items-center justify-center gap-2">
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const bps = DB.get("blueprints");
+        const list = document.getElementById("blueprint-list");
+        let selectedBpId = null;
+
+        if (bps.length === 0) {
+            list.innerHTML = `
+                <div class="flex flex-col items-center justify-center p-12 text-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                    <div class="text-5xl mb-4 opacity-50">📂</div>
+                    <h3 class="text-lg font-bold text-slate-700">No blueprints found</h3>
+                    <p class="text-slate-400 mb-6">You need a blueprint template to create a contract.</p>
+                    <a href="blueprint-create.html" class="text-emerald-600 font-bold hover:underline flex items-center gap-1">
+                        Create Blueprint <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </a>
+                </div>`;
+        } else {
+            list.innerHTML = bps.map((bp, index) => `
+                <label class="cursor-pointer block relative group animate-slide-up" style="animation-delay: ${index * 100}ms">
+                    <input type="radio" name="blueprint" value="${bp.id}" class="peer sr-only" onchange="selectedBpId = ${bp.id}">
+                    
+                    <div class="p-5 rounded-2xl border-2 border-slate-100 bg-white hover:border-emerald-300 transition-all duration-300 flex items-start gap-5 shadow-sm group-hover:shadow-md">
+                        
+                        <div class="icon-box w-14 h-14 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center flex-shrink-0 transition-colors duration-300">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></path></svg>
+                        </div>
+
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-1">
+                                <h3 class="font-bold text-lg text-slate-800 group-hover:text-emerald-700 transition-colors">${bp.name}</h3>
+                                
+                                <div class="w-6 h-6 rounded-full border-2 border-slate-200 check-circle flex items-center justify-center transition-all duration-300 bg-white">
+                                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                </div>
+                            </div>
+                            
+                            <p class="text-slate-500 text-sm mb-4 leading-relaxed">${bp.description || 'Standard contract template with customizable fields.'}</p>
+                            
+                            <div class="flex flex-wrap gap-2">
+                                ${bp.fields.map(f => `
+                                    <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-lg border border-slate-200 uppercase tracking-wide">
+                                        ${f.label || f.type}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </label>
+            `).join("");
+        }
+
+        function handleCreate() {
+            const name = document.getElementById("contractName").value;
+            
+            if(!name) {
+                // Shake animation for error
+                const input = document.getElementById("contractName");
+                input.classList.add('ring-2', 'ring-red-500', 'animate-pulse');
+                setTimeout(() => input.classList.remove('ring-2', 'ring-red-500', 'animate-pulse'), 1000);
+                document.getElementById("contractName").focus();
+                return;
+            }
+            if(!selectedBpId) {
+                alert("Please select a blueprint template below.");
+                return;
+            }
+            
+            createContract(selectedBpId, name); 
+        }
+    </script>
+</body>
+</html>

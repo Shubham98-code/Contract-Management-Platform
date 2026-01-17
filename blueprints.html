@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blueprints</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .bg-animated {
+            background: linear-gradient(-45deg, #f8fafc, #f3e8ff, #e0e7ff, #f1f5f9);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-card {
+            opacity: 0;
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-animated min-h-screen text-slate-800 selection:bg-purple-200 selection:text-purple-900">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 animate-fade-in">
+            <div>
+                <h1 class="text-6xl font-extrabold mb-2 tracking-tight">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600 drop-shadow-sm">
+                        Blueprints
+                    </span>
+                </h1>
+                <p class="text-slate-500 text-lg font-medium">Manage and create reusable contract templates.</p>
+            </div>
+            
+            <a href="index.html" class="mt-4 md:mt-0 flex items-center gap-2 text-slate-500 hover:text-purple-600 font-bold transition-all duration-300 bg-white/80 backdrop-blur px-5 py-2.5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md group">
+                <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Back to Dashboard
+            </a>
+        </div>
+
+        <div class="mb-10 animate-fade-in delay-100">
+            <a href="blueprint-create.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg shadow-purple-500/30 transition-all duration-300 hover:scale-105 hover:shadow-purple-500/50 active:scale-95 group">
+                <div class="bg-white/20 p-1 rounded-lg group-hover:rotate-90 transition-transform duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+                </div>
+                Create New Blueprint
+            </a>
+        </div>
+
+        <div id="blueprint-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const bps = DB.get("blueprints");
+        const grid = document.getElementById("blueprint-grid");
+
+        // Helper to show basic details
+        function viewBlueprint(id) {
+            const bp = bps.find(b => b.id == id);
+            if(bp) {
+                const fieldsList = bp.fields.map(f => `• ${f.label} (${f.type})`).join('\n');
+                alert(`BLUEPRINT DETAILS\n\nName: ${bp.name}\nID: ${bp.id}\nCreated: ${bp.createdDate || 'N/A'}\n\nFields:\n${fieldsList}`);
+            }
+        }
+
+        if(bps.length === 0) {
+            grid.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-24 bg-white/60 backdrop-blur-sm rounded-3xl border-2 border-dashed border-slate-300 animate-fade-in">
+                    <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                        <span class="text-4xl">📄</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-700 mb-2">No Blueprints Yet</h3>
+                    <p class="text-slate-500 mb-8">Create your first template to get started</p>
+                    <a href="blueprint-create.html" class="text-purple-600 font-bold hover:text-purple-800 hover:underline flex items-center gap-2 transition-colors">
+                        Create Blueprint <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </a>
+                </div>
+            `;
+        } else {
+            grid.innerHTML = bps.map((bp, index) => {
+                const types = [...new Set(bp.fields.map(f => f.type))];
+                const dateStr = bp.createdDate || "Jan 17, 2026"; 
+
+                return `
+                <div class="animate-card group relative bg-white/90 backdrop-blur-xl rounded-2xl p-6 border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-2 hover:border-purple-200 overflow-hidden" style="animation-delay: ${index * 100}ms">
+                    
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-indigo-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-100 to-violet-100 text-purple-600 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-slate-800 leading-tight group-hover:text-purple-700 transition-colors">${bp.name}</h3>
+                                <p class="text-xs text-slate-500 mt-1 font-medium bg-slate-100 px-2 py-0.5 rounded-full inline-block">ID: ${bp.id}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-slate-600 mb-6 line-clamp-2 h-10 leading-relaxed">${bp.description || 'Standard contract template with customizable fields.'}</p>
+
+                    <div class="flex items-center gap-3 mb-6 bg-slate-50/80 p-3 rounded-xl border border-slate-100">
+                        <div class="flex items-center gap-1.5 text-sm font-bold text-slate-700">
+                            <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                            <span>${bp.fields.length}</span> <span class="text-slate-400 font-normal">Fields</span>
+                        </div>
+                        <div class="h-4 w-px bg-slate-300"></div>
+                        <div class="flex gap-1 overflow-hidden flex-1">
+                            ${types.map(t => `<span class="px-1.5 py-0.5 bg-white border border-slate-200 rounded text-[10px] uppercase font-bold text-slate-500 tracking-wide shadow-sm">${t}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-5 flex items-center justify-between mt-auto">
+                        <div class="flex items-center text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                            ${dateStr}
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <button onclick="viewBlueprint(${bp.id})" class="p-2 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all" title="View Details">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            </button>
+                            
+                            <a href="blueprint-edit.html?id=${bp.id}" class="p-2 rounded-lg text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all" title="Edit Blueprint">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            </a>
+                            
+                            <button onclick="deleteBlueprint(${bp.id})" class="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all" title="Delete">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join("");
+        }
+    </script>
+</body>
+</html>

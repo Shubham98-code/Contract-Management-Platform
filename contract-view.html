@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Contract</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #contract-paper, #contract-paper * { visibility: visible; }
+            #contract-paper { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800">
+    
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6 no-print">
+            <a href="index.html" class="inline-flex items-center text-slate-500 hover:text-blue-600 transition-colors group font-medium">
+                <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7 7-7"/></svg>
+                Back to Dashboard
+            </a>
+            <div class="flex gap-3">
+                <a id="edit-link" href="#" class="bg-white border border-slate-200 text-slate-700 hover:border-green-400 hover:text-green-600 px-4 py-2 rounded-lg font-bold text-sm transition-colors flex items-center gap-2 shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    Edit Contract
+                </a>
+                <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors flex items-center gap-2 shadow-md">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                    Print
+                </button>
+            </div>
+        </div>
+
+        <div id="contract-paper" class="bg-white rounded-xl shadow-2xl p-12 min-h-[600px] relative animate-fade-in border border-slate-200">
+            <div id="watermark" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-9xl font-black text-slate-100 -rotate-45 select-none pointer-events-none z-0">DRAFT</div>
+
+            <div class="relative z-10">
+                <div class="border-b-2 border-slate-800 pb-6 mb-8 flex justify-between items-start">
+                    <div>
+                        <h1 class="text-4xl font-bold text-slate-900 tracking-tight mb-2" id="contract-title">Contract</h1>
+                        <p class="text-slate-500 font-medium" id="contract-id">ID: #0000</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-slate-400 uppercase tracking-widest font-bold mb-1">Date Created</div>
+                        <div class="font-mono text-slate-800" id="contract-date">...</div>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded text-xs font-bold uppercase tracking-wide">Template Type</span>
+                    <p class="text-lg font-semibold text-slate-800 mt-2" id="blueprint-name">...</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mb-12" id="fields-display"></div>
+
+                <div class="mt-16 pt-8 border-t border-slate-200 flex justify-end items-end">
+                    <div id="status-badge" class="px-4 py-2 rounded border-2 font-bold uppercase tracking-widest text-sm">STATUS</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        const contracts = DB.get("contracts");
+        const contract = contracts.find(c => c.id == id);
+
+        if (!contract) {
+            document.body.innerHTML = `<div class="p-12 text-center"><h1>Contract Not Found</h1><a href="index.html" class="text-blue-600 underline">Back</a></div>`;
+        } else {
+            document.getElementById('edit-link').href = `contract-update.html?id=${contract.id}`;
+            document.getElementById('contract-title').innerText = contract.clientName || 'Untitled Contract';
+            document.getElementById('contract-id').innerText = `ID: #${contract.id}`;
+            document.getElementById('contract-date').innerText = contract.createdDate;
+            document.getElementById('blueprint-name').innerText = contract.blueprintName;
+
+            const wm = document.getElementById('watermark');
+            const badge = document.getElementById('status-badge');
+            wm.innerText = contract.status;
+            badge.innerText = contract.status;
+
+            if(contract.status === 'Signed' || contract.status === 'Locked') {
+                wm.className += " text-green-50"; 
+                badge.className += " border-green-600 text-green-700 bg-green-50";
+            } else if (contract.status === 'Revoked') {
+                wm.className += " text-red-50";
+                badge.className += " border-red-600 text-red-700 bg-red-50";
+            } else {
+                badge.className += " border-slate-300 text-slate-500 bg-slate-50";
+            }
+
+            // Render Fields with Image Support
+            const container = document.getElementById('fields-display');
+            container.innerHTML = contract.fields.map(f => {
+                let valueHtml = '';
+
+                if (f.type === 'signature' && f.value) {
+                    // Render as Image
+                    valueHtml = `<img src="${f.value}" class="max-h-24 border-b border-slate-300 pb-1" alt="Signature">`;
+                } else {
+                    // Render as Text
+                    valueHtml = `<p class="text-lg font-medium text-slate-800 border-b border-slate-100 pb-1 min-h-[2rem]">
+                        ${f.value || '<span class="text-slate-300 italic">Empty</span>'}
+                    </p>`;
+                }
+
+                return `
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">${f.label}</h4>
+                    ${valueHtml}
+                </div>`;
+            }).join("");
+        }
+    </script>
+</body>
+</html>

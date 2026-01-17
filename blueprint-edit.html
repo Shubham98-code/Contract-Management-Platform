@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Blueprint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .bg-animated {
+            background: linear-gradient(-45deg, #f8fafc, #e0f2fe, #f3e8ff, #f1f5f9);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-slide-in {
+            animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-animated min-h-screen text-slate-800 selection:bg-purple-200 selection:text-purple-900">
+    
+    <div class="max-w-6xl mx-auto px-4 py-10">
+        
+        <a href="blueprints.html" class="inline-flex items-center text-slate-500 hover:text-blue-600 mb-8 transition-all duration-300 group font-medium">
+            <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-3 group-hover:scale-110 group-hover:shadow-md transition-all">
+                <svg class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </div>
+            Back to Blueprints
+        </a>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
+            
+            <div class="lg:col-span-2 space-y-8">
+                <div>
+                    <h1 class="text-5xl font-extrabold mb-2 tracking-tight">
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-sm">
+                            Edit Blueprint
+                        </span>
+                    </h1>
+                    <p class="text-slate-500 text-lg">Modify your existing contract template.</p>
+                </div>
+
+                <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-slate-200/50 border border-white/50 p-8 transition-all hover:shadow-2xl hover:shadow-purple-500/10">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-slate-800">Blueprint Information</h2>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="group">
+                            <label class="block text-sm font-bold text-slate-700 mb-2 ml-1">Blueprint Name</label>
+                            <input type="text" id="bpName" oninput="updateSummary()" 
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all duration-300 outline-none font-medium">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2 ml-1">Description</label>
+                            <textarea id="bpDesc" rows="3" 
+                                class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all duration-300 outline-none resize-none font-medium"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-slate-200/50 border border-white/50 p-8 transition-all hover:shadow-2xl hover:shadow-blue-500/10">
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-slate-800">Contract Fields</h2>
+                        </div>
+                    </div>
+                    
+                    <div id="fields-container" class="space-y-3 mb-8 min-h-[100px]">
+                        </div>
+
+                    <div class="flex gap-3 pt-6 border-t border-slate-100">
+                        <div class="relative group">
+                            <select id="newFieldType" class="appearance-none pl-4 pr-10 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none cursor-pointer transition-all hover:border-blue-300">
+                                <option value="text">Text Field</option>
+                                <option value="date">Date Field</option>
+                                <option value="number">Number</option>
+                                <option value="signature">Signature</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                                <svg class="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                            </div>
+                        </div>
+
+                        <button onclick="addField()" class="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-blue-500/50 active:scale-[0.98]">
+                            Add New Field
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="flex flex-col gap-4 bg-white/80 backdrop-blur p-4 rounded-2xl shadow-lg border border-white/50">
+                    <button onclick="saveChanges()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 rounded-xl font-bold shadow-lg shadow-purple-500/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-purple-500/50 active:scale-[0.98] flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        Update Blueprint
+                    </button>
+                    <a href="blueprints.html" class="w-full bg-white border-2 border-slate-100 text-slate-500 py-3 rounded-xl font-bold text-center hover:bg-red-50 hover:text-red-600 hover:border-red-100 transition-all duration-300">
+                        Cancel
+                    </a>
+                </div>
+
+                <div class="bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl shadow-slate-200/50 border border-white/50 p-6 sticky top-6 transition-all">
+                    <h3 class="font-bold text-slate-800 mb-4 pb-3 border-b border-slate-100 flex items-center gap-2">
+                        <span class="text-xl">📊</span> Live Summary
+                    </h3>
+                    <div class="space-y-4 text-sm">
+                        <div class="flex justify-between items-center p-3 rounded-lg bg-slate-50">
+                            <span class="text-slate-500 font-medium">Name</span>
+                            <span class="font-bold text-slate-800 truncate max-w-[120px]" id="summary-name">...</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 rounded-lg bg-slate-50">
+                            <span class="text-slate-500 font-medium">Total Fields</span>
+                            <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-bold text-xs" id="summary-count">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const blueprintId = urlParams.get('id');
+        let fields = [];
+
+        // LOAD DATA
+        if (blueprintId) {
+            const bps = DB.get("blueprints");
+            const bp = bps.find(b => b.id == blueprintId);
+            if (bp) {
+                document.getElementById("bpName").value = bp.name;
+                document.getElementById("bpDesc").value = bp.description || "";
+                fields = bp.fields || [];
+                renderFields();
+                updateSummary();
+            } else {
+                alert("Blueprint not found");
+                window.location.href = "blueprints.html";
+            }
+        } else {
+            alert("No blueprint ID specified");
+            window.location.href = "blueprints.html";
+        }
+
+        // Logic
+        function addField() {
+            const typeSelect = document.getElementById("newFieldType");
+            const type = typeSelect.value;
+            fields.push({ id: Date.now(), label: "", type: type });
+            renderFields();
+            updateSummary();
+        }
+
+        function removeField(id) {
+            fields = fields.filter(f => f.id !== id);
+            renderFields();
+            updateSummary();
+        }
+
+        function updateField(id, key, value) {
+            const f = fields.find(f => f.id === id);
+            if(f) f[key] = value;
+        }
+
+        function renderFields() {
+            const container = document.getElementById("fields-container");
+            if(fields.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 text-slate-400">No fields added</div>`;
+                return;
+            }
+            container.innerHTML = fields.map((f, idx) => `
+                <div class="flex gap-3 items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm animate-slide-in">
+                    <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500">${idx + 1}</div>
+                    <input type="text" placeholder="Field Label" value="${f.label}" onchange="updateField(${f.id}, 'label', this.value)" class="flex-1 px-3 py-2 rounded-lg bg-slate-50 outline-none focus:ring-2 focus:ring-purple-200">
+                    <span class="px-2.5 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-md uppercase">${f.type}</span>
+                    <button onclick="removeField(${f.id})" class="text-slate-300 hover:text-red-500">✕</button>
+                </div>
+            `).join("");
+        }
+
+        function updateSummary() {
+            const name = document.getElementById("bpName").value;
+            document.getElementById("summary-name").innerText = name || "Not set";
+            document.getElementById("summary-count").innerText = fields.length;
+        }
+
+        function saveChanges() {
+            const name = document.getElementById("bpName").value;
+            const desc = document.getElementById("bpDesc").value;
+            if(!name) return alert("Enter blueprint name");
+            if(fields.length === 0) return alert("Add at least one field");
+
+            // Calling updated saveBlueprint with ID
+            saveBlueprint(name, desc, fields, blueprintId);
+        }
+    </script>
+</body>
+</html>
