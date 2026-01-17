@@ -4,34 +4,70 @@
     <meta charset="UTF-8">
     <title>Update Contract</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Animated Background (Green/Teal Tint for Contracts) */
+        .bg-animated {
+            background: linear-gradient(-45deg, #8ae8a6, #6be8ae, #81bae1, #8ab2da);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Status Animations */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .status-active-icon {
+            animation: pulse-ring 2s infinite;
+        }
+    </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800">
+<body class="bg-animated min-h-screen text-slate-800 selection:bg-emerald-200 selection:text-emerald-900">
     
-    <div class="max-w-4xl mx-auto px-4 py-8">
-        <a href="index.html" class="inline-flex items-center text-slate-500 hover:text-green-600 mb-6 transition-colors group">
-            <svg class="w-4 h-4 mr-1 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    <div class="max-w-6xl mx-auto px-4 py-10">
+        
+        <a href="index.html" class="inline-flex items-center text-slate-500 hover:text-emerald-600 mb-8 transition-all duration-300 group font-medium">
+            <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center mr-3 group-hover:scale-110 group-hover:shadow-md transition-all">
+                <svg class="w-4 h-4 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </div>
             Back to Dashboard
         </a>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
             
-            <div class="lg:col-span-2">
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border-t-4 border-green-500">
-                    <div class="px-8 py-6 border-b border-slate-100 bg-slate-50/50">
-                        <h1 class="text-2xl font-bold text-slate-800">Edit Contract Data</h1>
-                        <p class="text-slate-500 text-sm mt-1" id="contract-name">Loading...</p>
-                    </div>
+            <div class="lg:col-span-2 space-y-6">
+                
+                <div>
+                    <h1 class="text-4xl font-extrabold mb-2 tracking-tight">
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-600 drop-shadow-sm">
+                            Edit Contract Data
+                        </span>
+                    </h1>
+                    <p class="text-slate-500 font-medium flex items-center gap-2">
+                        <span id="contract-name">Loading...</span>
+                        <span class="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-wider border border-emerald-200" id="status-badge-small">...</span>
+                    </p>
+                </div>
 
+                <div class="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-900/5 border border-white/50 overflow-hidden transition-all hover:shadow-2xl hover:shadow-emerald-500/10">
                     <div class="p-8">
                         <form id="update-form" class="space-y-6" onsubmit="event.preventDefault(); saveChanges();">
-                            <div id="fields-container" class="space-y-6">
+                            <div id="fields-container" class="space-y-6 min-h-[100px]">
                                 </div>
 
-                            <div class="pt-6 border-t border-slate-100 mt-6">
-                                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 rounded-lg font-bold shadow-lg transition-all flex justify-center items-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                            <div class="pt-8 border-t border-slate-200/60 mt-8">
+                                <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white py-4 rounded-xl font-bold shadow-lg shadow-emerald-500/20 transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] flex justify-center items-center gap-2 group">
+                                    <svg class="w-5 h-5 text-emerald-100 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
                                     Save Field Changes
                                 </button>
                             </div>
@@ -41,21 +77,27 @@
             </div>
 
             <div class="space-y-6">
-                <div class="bg-white rounded-2xl shadow-md border border-slate-100 p-6 sticky top-8">
-                    <h3 class="font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100 flex justify-between items-center">
-                        Contract Lifecycle
-                        <span id="status-badge-small" class="text-xs px-2 py-1 rounded bg-slate-100 text-slate-600">...</span>
+                <div class="bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl shadow-slate-200/50 border border-white/50 p-6 sticky top-6 transition-all">
+                    
+                    <h3 class="font-bold text-slate-800 mb-6 pb-4 border-b border-slate-100 flex items-center gap-2">
+                        <span class="text-xl">🔄</span> Contract Lifecycle
                     </h3>
                     
-                    <div id="lifecycle-list" class="space-y-2 relative"></div>
+                    <div id="lifecycle-list" class="space-y-0 relative pl-2">
+                        <div class="absolute left-[23px] top-4 bottom-10 w-0.5 bg-slate-200 -z-10"></div>
+                        </div>
 
-                    <div class="mt-8 pt-4 border-t border-slate-100">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Danger Zone</p>
+                    <div class="mt-8 pt-6 border-t border-slate-100">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> Danger Zone
+                        </p>
                         <div class="space-y-3">
-                             <button id="revoke-btn" onclick="changeStatus('Revoked')" class="w-full text-orange-600 bg-orange-50 border border-orange-200 hover:bg-orange-100 font-bold text-sm py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2">
+                             <button id="revoke-btn" onclick="changeStatus('Revoked')" class="w-full text-orange-600 bg-orange-50 border border-orange-100 hover:bg-orange-100 hover:border-orange-200 font-bold text-sm py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group">
+                                <svg class="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                                 Revoke Contract
                             </button>
-                            <button onclick="deleteContract()" class="w-full text-red-600 bg-white border border-red-200 hover:bg-red-50 font-bold text-sm py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2">
+                            <button onclick="deleteContract()" class="w-full text-red-600 bg-red-50 border border-red-100 hover:bg-red-100 hover:border-red-200 font-bold text-sm py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group">
+                                <svg class="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 Delete Contract
                             </button>
                         </div>
@@ -78,10 +120,11 @@
             window.location.href = "index.html";
         }
 
-        // Render Header & Fields
-        document.getElementById('contract-name').innerText = (contract.clientName || 'Contract #' + contract.id) + " - " + contract.blueprintName;
+        // Render Header Info
+        document.getElementById('contract-name').innerText = contract.clientName || ('Contract #' + contract.id);
         document.getElementById('status-badge-small').innerText = contract.status;
 
+        // Render Fields
         const container = document.getElementById('fields-container');
         const isLocked = contract.status === 'Locked' || contract.status === 'Revoked';
 
@@ -90,58 +133,70 @@
             if (f.type === 'signature') {
                 const hasValue = f.value && f.value.length > 0;
                 return `
-                <div class="p-4 border border-slate-200 rounded-lg bg-slate-50">
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">${f.label} (Upload Image)</label>
+                <div class="group p-5 border border-slate-200 rounded-xl bg-slate-50/50 hover:bg-white hover:border-emerald-200 hover:shadow-md transition-all duration-300">
+                    <label class="block text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                        ${f.label} <span class="text-xs font-normal text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">Image Upload</span>
+                    </label>
                     
-                    <div class="mb-3 ${hasValue ? '' : 'hidden'}" id="preview-container-${idx}">
-                        <img id="preview-${idx}" src="${f.value}" class="h-20 border border-slate-300 rounded bg-white p-1">
+                    <div class="mb-4 ${hasValue ? '' : 'hidden'} transition-all" id="preview-container-${idx}">
+                        <div class="relative inline-block group/img">
+                            <img id="preview-${idx}" src="${f.value}" class="h-24 border-2 border-emerald-100 rounded-lg bg-white p-2 shadow-sm">
+                            <div class="absolute inset-0 bg-black/5 opacity-0 group-hover/img:opacity-100 transition-opacity rounded-lg"></div>
+                        </div>
                     </div>
 
-                    <input type="file" accept="image/*" 
-                        onchange="handleFileUpload(this, ${idx})"
-                        ${isLocked ? 'disabled' : ''}
-                        class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all">
+                    <label class="block">
+                        <span class="sr-only">Choose file</span>
+                        <input type="file" accept="image/*" 
+                            onchange="handleFileUpload(this, ${idx})"
+                            ${isLocked ? 'disabled' : ''}
+                            class="block w-full text-sm text-slate-500
+                                file:mr-4 file:py-2.5 file:px-4
+                                file:rounded-full file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-emerald-50 file:text-emerald-700
+                                hover:file:bg-emerald-100
+                                transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+                            "/>
+                    </label>
                     
                     <input type="hidden" id="field-${idx}" value="${f.value || ''}">
                 </div>`;
             } else {
                 // Standard Text/Date Input
                 return `
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">${f.label}</label>
+                <div class="group">
+                    <label class="block text-sm font-bold text-slate-700 mb-2 ml-1 transition-colors group-focus-within:text-emerald-600">${f.label}</label>
                     <input type="${f.type}" id="field-${idx}" value="${f.value || ''}" 
                         ${isLocked ? 'disabled' : ''}
-                        class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none disabled:bg-slate-100 disabled:text-slate-500">
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/30 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all outline-none font-medium disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed">
                 </div>`;
             }
         }).join("");
 
-        if(isLocked) document.querySelector('button[type="submit"]').style.display = 'none';
+        if(isLocked) {
+            document.querySelector('button[type="submit"]').style.display = 'none';
+            const form = document.getElementById('update-form');
+            form.classList.add('opacity-75', 'pointer-events-none');
+        }
 
         renderLifecycleList();
 
-        // --- NEW: Handle File Upload ---
         function handleFileUpload(input, idx) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                
                 reader.onload = function(e) {
-                    // 1. Update Hidden Input with Base64 String
                     document.getElementById(`field-${idx}`).value = e.target.result;
-                    
-                    // 2. Update Preview
                     const preview = document.getElementById(`preview-${idx}`);
                     const container = document.getElementById(`preview-container-${idx}`);
                     preview.src = e.target.result;
                     container.classList.remove('hidden');
                 };
-
-                // Read file as Data URL (Base64)
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        // Render Status List (Same as before)
         function renderLifecycleList() {
             const listContainer = document.getElementById('lifecycle-list');
             const steps = [
@@ -153,7 +208,7 @@
             ];
 
             if(contract.status === 'Revoked') {
-                listContainer.innerHTML = `<div class="p-3 rounded-lg bg-orange-50 border border-orange-200 text-orange-800 font-bold flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-orange-200 flex items-center justify-center text-xs">🚫</span>Contract Revoked</div>`;
+                listContainer.innerHTML = `<div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 font-bold flex items-center gap-3 animate-fade-in"><span class="w-8 h-8 rounded-full bg-red-200 flex items-center justify-center text-lg shadow-sm">🚫</span>Contract Revoked</div>`;
                 document.getElementById('revoke-btn').style.display = 'none';
                 return;
             }
@@ -166,26 +221,38 @@
                 let clickAction = "";
 
                 if (index <= currentIndex) {
-                    stateClass = "bg-white border-slate-200 text-slate-400";
-                    iconDisplay = `<div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center border border-green-200">✓</div>`;
+                    // COMPLETED
+                    stateClass = "bg-white border-slate-100 opacity-80";
+                    iconDisplay = `<div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center border border-emerald-200 shadow-sm z-10"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div>`;
+                    
                     if(index === currentIndex && contract.status === 'Locked') {
-                        iconDisplay = `<div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center">🔒</div>`;
-                        stateClass = "bg-slate-50 border-slate-200 text-slate-800 font-bold";
+                        iconDisplay = `<div class="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center shadow-lg z-10">🔒</div>`;
+                        stateClass = "bg-slate-100 border-slate-200 font-bold shadow-inner";
                     }
                 } else if (index === currentIndex + 1) {
-                    stateClass = "bg-blue-50 border-blue-500 shadow-md transform scale-[1.02] cursor-pointer hover:bg-blue-100 transition-all";
-                    iconDisplay = `<div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg animate-pulse">${step.icon}</div>`;
+                    // NEXT ACTION (Active)
+                    stateClass = "bg-emerald-50/80 border-emerald-200 shadow-md transform scale-[1.02] cursor-pointer hover:bg-emerald-100 hover:shadow-lg transition-all z-10";
+                    iconDisplay = `<div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 status-active-icon z-20 text-lg">${step.icon}</div>`;
                     clickAction = `onclick="changeStatus('${step.status}')"`;
                 } else {
-                    stateClass = "bg-slate-50 border-slate-100 text-slate-300 opacity-60 pointer-events-none";
-                    iconDisplay = `<div class="w-8 h-8 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center font-bold text-xs">${index + 1}</div>`;
+                    // FUTURE
+                    stateClass = "bg-transparent border-transparent text-slate-400 opacity-60";
+                    iconDisplay = `<div class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 border border-slate-200 flex items-center justify-center font-bold text-xs z-10">${index + 1}</div>`;
                 }
 
-                return `<div ${clickAction} class="relative z-10 p-3 rounded-xl border ${stateClass} flex items-center gap-4 select-none">${iconDisplay}<div class="flex-1"><p class="font-semibold text-sm">${step.label}</p>${index === currentIndex + 1 ? '<p class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">Click to Proceed</p>' : ''}</div></div>`;
+                const paddingClass = index === currentIndex + 1 ? "py-4 -ml-2" : "py-3";
+
+                return `
+                <div ${clickAction} class="relative flex items-center gap-4 ${paddingClass} rounded-xl border ${stateClass} px-4 transition-all duration-300 mb-2 select-none group">
+                    ${iconDisplay}
+                    <div class="flex-1">
+                        <p class="font-bold text-sm ${index === currentIndex + 1 ? 'text-emerald-700' : ''}">${step.label}</p>
+                        ${index === currentIndex + 1 ? '<p class="text-[10px] text-emerald-600 font-bold uppercase tracking-wider mt-0.5 group-hover:underline">Click to Proceed →</p>' : ''}
+                    </div>
+                </div>`;
             }).join("");
         }
 
-        // Save Function (works for both text and hidden file inputs)
         function saveChanges() {
             const inputs = document.querySelectorAll('input[id^="field-"]');
             inputs.forEach((input, idx) => contract.fields[idx].value = input.value);
@@ -193,12 +260,10 @@
             
             const btn = document.querySelector('button[type="submit"]');
             const original = btn.innerHTML;
-            btn.innerHTML = "✓ Saved!";
-            btn.classList.add("bg-green-600", "text-white");
+            btn.innerHTML = `<span class="flex items-center gap-2">✓ Saved!</span>`;
+            
             setTimeout(() => {
                 btn.innerHTML = original;
-                btn.classList.remove("bg-green-600");
-                btn.classList.add("bg-slate-900");
             }, 1500);
         }
 
