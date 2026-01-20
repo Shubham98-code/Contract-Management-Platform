@@ -5,6 +5,8 @@
 
 A lightweight, frontend-only application designed to manage the lifecycle of client contracts. This system allows users to define reusable templates (**Blueprints**) and instantiate them into specific **Contracts**, tracking their status from creation to signature.
 
+Live Project Link= https://shubham98-code.github.io/Contract-Management-Platform
+
 ## 🚀 Key Features
 
 - **Blueprint System:** Create reusable schemas (e.g., "Employment Agreement") to standardize document structures.
