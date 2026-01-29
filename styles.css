@@ -11,7 +11,11 @@
         transform: translateY(0);
     }
 }
-
+@media screen and (max-width: 600px) {
+  #nav {
+    display: none !important; /* Hides the element on mobile */
+  }
+}
 .animate-fade-in {
     animation: fadeInUp 0.6s ease-out forwards;
 }
